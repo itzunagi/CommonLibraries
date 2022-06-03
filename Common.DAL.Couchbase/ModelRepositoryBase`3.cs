@@ -5,6 +5,7 @@ using Common.Results;
 using Common.Results.Models;
 using Couchbase.Core.Exceptions.KeyValue;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Linq;
@@ -102,6 +103,11 @@ namespace Common.DAL.Couchbase
             }
 
             return ResultFactory.Success();
+        }
+
+        public async Task<IResult<IEnumerable<TBusinessModel>>> ListAsync()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IResult> SaveAsync(TId id, TBusinessModel model)

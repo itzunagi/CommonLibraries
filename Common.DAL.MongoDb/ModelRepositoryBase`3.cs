@@ -85,6 +85,18 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
         return ResultFactory.Success();
     }
 
+    public async Task<IResult<IEnumerable<TBusinessModel>>> ListAsync()
+    {
+        var database = Client.GetDatabase(Database);
+        var collection = database.GetCollection<TDatabaseModel>(Collection);
+        var documents = await collection.FindAsync(Builders<TDatabaseModel>.Filter.Empty,
+            new FindOptions<TDatabaseModel>
+            {
+                Sort = Builders<TDatabaseModel>.Sort.Ascending(m => m.Id)
+            }).ConfigureAwait(false);
+        return ResultFactory.Success(documents.ToList(CancellationToken.None).Select(Mapper.Map<TBusinessModel>));
+    }
+
     public async Task<IResult> SaveAsync(TId id, TBusinessModel model)
     {
         var database = Client.GetDatabase(Database);

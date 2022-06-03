@@ -81,6 +81,11 @@ namespace Common.DAL.DynamoDB
             throw new NotImplementedException();
         }
 
+        public async Task<IResult<IEnumerable<TBusinessModel>>> ListAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IResult> SaveAsync(long id, TBusinessModel model)
         {
             throw new NotImplementedException();

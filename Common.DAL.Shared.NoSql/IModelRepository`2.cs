@@ -9,6 +9,7 @@ namespace Common.DAL.Shared.NoSql
         Task<IResult<TBusinessModel>> CreateAsync(TBusinessModel model);
         Task<IResult<TBusinessModel>> GetAsync(TId id);
         Task<IResult> DeleteAsync(TId id);
+        Task<IResult<IEnumerable<TBusinessModel>>> ListAsync();
         Task<IResult> SaveAsync(TId id, TBusinessModel model);
     }
 }

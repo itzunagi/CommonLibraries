@@ -5,6 +5,11 @@ namespace Common.Results
 {
     public static class ResultFactoryExtensions
     {
+        public static IResult BadRequest(this IResultFactory resultFactory, string errorMessage = "Bad request.")
+        {
+            return resultFactory.Error(HttpStatusCode.BadRequest, errorMessage);
+        }
+
         public static IResult<T> BadRequest<T>(this IResultFactory resultFactory, string errorMessage = "Bad request.")
         {
             return resultFactory.Error<T>(HttpStatusCode.BadRequest, errorMessage);
