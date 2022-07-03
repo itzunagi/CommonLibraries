@@ -1,4 +1,4 @@
-﻿using Common.DAL.Couchbase;
+﻿using Common.DAL.Shared.NoSql;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Common.DAL.MongoDb.Documents;

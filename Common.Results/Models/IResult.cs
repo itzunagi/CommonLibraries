@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 
-namespace Common.Results.Models
+namespace Common.Results.Models;
+
+public interface IResult
 {
-    public interface IResult
-    {
-        bool IsSuccessful();
-        HttpStatusCode StatusCode { get; init; }
-        IEnumerable<string> Errors { get; init; }
-    }
+    bool IsSuccessful();
+    HttpStatusCode StatusCode { get; init; }
+    IEnumerable<string> Errors { get; init; }
+}
+
+public interface IResult<T> : IResult
+{
+    T Value { get; init; }
 }

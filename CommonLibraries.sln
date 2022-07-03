@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.DAL.DynamoDB", "Comm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.DAL.MongoDb", "Common.DAL.MongoDb\Common.DAL.MongoDb.csproj", "{9ADCB9F6-C8E8-49E3-81EA-5425FF8821F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Services.Mediator", "Common.Services.Mediator\Common.Services.Mediator.csproj", "{DFB6C031-18FA-4849-9560-91EDB88E153A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{9ADCB9F6-C8E8-49E3-81EA-5425FF8821F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ADCB9F6-C8E8-49E3-81EA-5425FF8821F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ADCB9F6-C8E8-49E3-81EA-5425FF8821F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB6C031-18FA-4849-9560-91EDB88E153A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB6C031-18FA-4849-9560-91EDB88E153A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB6C031-18FA-4849-9560-91EDB88E153A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB6C031-18FA-4849-9560-91EDB88E153A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

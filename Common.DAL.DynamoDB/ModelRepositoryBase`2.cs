@@ -11,84 +11,83 @@ using Common.DAL.Shared.NoSql;
 using Common.Results;
 using Common.Results.Models;
 
-namespace Common.DAL.DynamoDB
+namespace Common.DAL.DynamoDB;
+
+public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel>
+    : IModelRepository<TBusinessModel, long>
+    where TDatabaseModel : DatabaseModelBase<TDatabaseModel, long>
+    where TBusinessModel : ModelBase<long>
 {
-    public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel>
-        : IModelRepository<TBusinessModel, long>
-        where TDatabaseModel : DatabaseModelBase<TDatabaseModel, long>
-        where TBusinessModel : ModelBase<long>
+    protected readonly IAmazonDynamoDB AmazonDynamoDb;
+    protected readonly IMapper Mapper;
+    protected readonly IResultFactory ResultFactory;
+
+    protected ModelRepositoryBase(
+        IAmazonDynamoDB amazonDynamoDb,
+        IMapper mapper,
+        IResultFactory resultFactory)
     {
-        protected readonly IAmazonDynamoDB AmazonDynamoDb;
-        protected readonly IMapper Mapper;
-        protected readonly IResultFactory ResultFactory;
+        AmazonDynamoDb = amazonDynamoDb ?? throw new ArgumentNullException(nameof(amazonDynamoDb));
+        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
+    }
 
-        protected ModelRepositoryBase(
-            IAmazonDynamoDB amazonDynamoDb,
-            IMapper mapper,
-            IResultFactory resultFactory)
+    public virtual async Task<IResult<TBusinessModel>> CreateAsync(TBusinessModel model)
+    {
+        var tableResponse = await AmazonDynamoDb.ListTablesAsync();
+        if (!tableResponse.TableNames.Contains(DatabaseModelBase<TDatabaseModel, long>.GetTableName()))
         {
-            AmazonDynamoDb = amazonDynamoDb ?? throw new ArgumentNullException(nameof(amazonDynamoDb));
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
-        }
-
-        public virtual async Task<IResult<TBusinessModel>> CreateAsync(TBusinessModel model)
-        {
-            var tableResponse = await AmazonDynamoDb.ListTablesAsync();
-            if (!tableResponse.TableNames.Contains(DatabaseModelBase<TDatabaseModel, long>.GetTableName()))
+            // Create our table if it doesn't exist
+            var createTableResponse = await AmazonDynamoDb.CreateTableAsync(new CreateTableRequest
             {
-                // Create our table if it doesn't exist
-                var createTableResponse = await AmazonDynamoDb.CreateTableAsync(new CreateTableRequest
+                TableName = DatabaseModelBase<TDatabaseModel, long>.GetTableName(),
+                AttributeDefinitions = new List<AttributeDefinition>
                 {
-                    TableName = DatabaseModelBase<TDatabaseModel, long>.GetTableName(),
-                    AttributeDefinitions = new List<AttributeDefinition>
+                    new()
                     {
-                        new()
-                        {
-                            AttributeName = "Id",
-                            AttributeType = ScalarAttributeType.N
-                        }
-                    },
-                    KeySchema = new List<KeySchemaElement>
+                        AttributeName = "Id",
+                        AttributeType = ScalarAttributeType.N
+                    }
+                },
+                KeySchema = new List<KeySchemaElement>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            AttributeName = "Key",
-                            KeyType = KeyType.HASH
-                        }
-                    },
-                    BillingMode = BillingMode.PAY_PER_REQUEST
-                });
+                        AttributeName = "Key",
+                        KeyType = KeyType.HASH
+                    }
+                },
+                BillingMode = BillingMode.PAY_PER_REQUEST
+            });
 
-                if (createTableResponse.HttpStatusCode != HttpStatusCode.OK)
-                {
-                    return ResultFactory.Error<TBusinessModel>(createTableResponse.HttpStatusCode, createTableResponse.ToString());
-                }
+            if (createTableResponse.HttpStatusCode != HttpStatusCode.OK)
+            {
+                return ResultFactory.Error<TBusinessModel>(createTableResponse.HttpStatusCode, createTableResponse.ToString());
             }
-
-            // table exists now
-
-            throw new NotImplementedException();
         }
 
-        public Task<IResult<TBusinessModel>> GetAsync(long id)
-        {
-            throw new NotImplementedException();
-        }
+        // table exists now
 
-        public Task<IResult> DeleteAsync(long id)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
+    }
 
-        public async Task<IResult<IEnumerable<TBusinessModel>>> ListAsync()
-        {
-            throw new NotImplementedException();
-        }
+    public Task<IResult<TBusinessModel>> GetAsync(long id)
+    {
+        throw new NotImplementedException();
+    }
 
-        public async Task<IResult> SaveAsync(long id, TBusinessModel model)
-        {
-            throw new NotImplementedException();
-        }
+    public Task<IResult> DeleteAsync(long id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IResult<IEnumerable<TBusinessModel>>> ListAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IResult> SaveAsync(long id, TBusinessModel model)
+    {
+        throw new NotImplementedException();
     }
 }

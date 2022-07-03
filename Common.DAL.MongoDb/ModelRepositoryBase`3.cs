@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using AutoMapper;
 using Common.BusinessLogic.Models;
-using Common.DAL.Couchbase;
 using Common.DAL.MongoDb.Documents;
 using Common.DAL.Shared.NoSql;
 using Common.Results;

@@ -1,7 +1,6 @@
-﻿namespace Common.BusinessLogic.Models
+﻿namespace Common.BusinessLogic.Models;
+
+public abstract class ModelBase<TId>
 {
-    public abstract class ModelBase<TId>
-    {
-        public TId Id { get; set; }
-    }
+    public TId Id { get; set; }
 }
