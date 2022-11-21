@@ -1,2 +1,2 @@
-cd D:\dev\local-dev
-dotnet nuget push Common.*.0.9.9-preview.nupkg -s aotowers/common-nuget
+cd \dev\local-dev
+dotnet nuget push Common.*.0.9.9-preview1.nupkg -s aotowers/common-nuget
