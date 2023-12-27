@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.0.18" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.300.26" />
   </ItemGroup>
 
   <ItemGroup>
