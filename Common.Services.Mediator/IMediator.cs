@@ -30,7 +30,7 @@ internal class Mediator : IMediator, IPublisher
     }
 
     /// <inheritdoc />
-    public async Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
+    public async Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
     {
         if (notification == null)
         {

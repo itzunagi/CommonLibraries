@@ -15,7 +15,7 @@ public interface INotificationHandler<in TNotification> : INotificationHandler
     /// </summary>
     /// <param name="notification">The notification</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    Task Handle(TNotification notification, CancellationToken cancellationToken);
+    Task HandleAsync(TNotification notification, CancellationToken cancellationToken);
 }
 
 /// <summary>

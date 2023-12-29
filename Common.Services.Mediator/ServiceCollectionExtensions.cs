@@ -6,7 +6,7 @@ namespace Common.Services.Mediator;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddMediator(this IServiceCollection services, ServiceLifetime mediatorLifetime = ServiceLifetime.Scoped)
+    public static IServiceCollection AddMediator(this IServiceCollection services, ServiceLifetime mediatorLifetime)
     {
         switch (mediatorLifetime)
         {
