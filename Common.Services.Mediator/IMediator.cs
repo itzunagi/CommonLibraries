@@ -44,7 +44,7 @@ internal class Mediator : IMediator, IPublisher
 
         foreach (var handler in handlers)
         {
-            await handler.Handle(notification, cancellationToken);
+            await handler.HandleAsync(notification, cancellationToken);
         }
     }
 }

@@ -1,1 +1,3 @@
-dotnet pack CommonLibraries.sln -o \dev\local-dev\ /p:VersionPrefix=0.9.9 --version-suffix preview1
+SET VERSION_NUMBER=1.0.1
+SET /A BuildNumber+=1
+dotnet pack CommonLibraries.sln -o \dev\local-dev\ /p:Version=%VERSION_NUMBER% --version-suffix preview%BuildNumber%
