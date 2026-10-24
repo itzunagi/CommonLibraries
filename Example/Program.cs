@@ -12,10 +12,11 @@ namespace Example;
 public class Program
 {
     private static readonly IServiceProvider ServiceProvider;
+    private static readonly IConfiguration Configuration;
 
     static Program()
     {
-        var configuration = new ConfigurationBuilder()
+        Configuration = new ConfigurationBuilder()
             .AddUserSecrets(typeof(Program).Assembly)
             .Build();
 
@@ -23,24 +24,24 @@ public class Program
             .AddDefaultAWSOptions(new AWSOptions
             {
                 Credentials = new BasicAWSCredentials(
-                    accessKey: configuration["AWS:AccessKey"],
-                    secretKey: configuration["AWS:SecretKey"]),
+                    accessKey: Configuration["AWS:AccessKey"],
+                    secretKey: Configuration["AWS:SecretKey"]),
                 Region = RegionEndpoint.USEast1,
                 DefaultClientConfig =
                 {
                     RegionEndpoint = RegionEndpoint.USEast1
                 },
                 DefaultConfigurationMode = DefaultConfigurationMode.Standard,
-                Profile = "***REMOVED***"
+                Profile = Configuration["AWS:Profile"]
             })
             .AddAWSService<IAmazonS3>()
             .AddS3FileProviders(new Dictionary<string, S3BucketOptions>
             {
                 {
-                    "***REMOVED***",
+                    Configuration["AWS:BucketName"],
                     new S3BucketOptions
                     {
-                        BucketName = "***REMOVED***"
+                        BucketName = Configuration["AWS:BucketName"]
                     }
                 }
             })
@@ -51,7 +52,7 @@ public class Program
     {
         var packetBytes = new byte[] { 0x1, 0xFF, 0x2, 0xFF, 0x3, 0xFF, 0x4 };
         var s3FileProviderResult = ServiceProvider.GetRequiredService<INamedFileProviderFactory>()
-            .CreateNamedFileProvider("***REMOVED***");
+            .CreateNamedFileProvider(Configuration["AWS:BucketName"]);
             var s3FileProvider = s3FileProviderResult.Value;
         await using Stream packetByteStream = new MemoryStream(packetBytes);
         var saveResult = await s3FileProvider.SaveFileAsync("requestmission", "testfile.bin", packetByteStream);
