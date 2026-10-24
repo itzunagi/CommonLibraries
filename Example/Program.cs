@@ -5,21 +5,26 @@ using Microsoft.Extensions.DependencyInjection;
 using Amazon.S3;
 using Common.FileProvider.Abstractions;
 using Common.FileProvider.S3;
+using Microsoft.Extensions.Configuration;
 
 namespace Example;
 
-class Program
+public class Program
 {
     private static readonly IServiceProvider ServiceProvider;
 
     static Program()
     {
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets(typeof(Program).Assembly)
+            .Build();
+
         ServiceProvider = new ServiceCollection()
             .AddDefaultAWSOptions(new AWSOptions
             {
                 Credentials = new BasicAWSCredentials(
-                    accessKey: "***REMOVED***",
-                    secretKey: "***REMOVED***"),
+                    accessKey: configuration["AWS:AccessKey"],
+                    secretKey: configuration["AWS:SecretKey"]),
                 Region = RegionEndpoint.USEast1,
                 DefaultClientConfig =
                 {
@@ -42,7 +47,7 @@ class Program
             .BuildServiceProvider();
     }
 
-    static async Task Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var packetBytes = new byte[] { 0x1, 0xFF, 0x2, 0xFF, 0x3, 0xFF, 0x4 };
         var s3FileProviderResult = ServiceProvider.GetRequiredService<INamedFileProviderFactory>()
@@ -63,7 +68,7 @@ class Program
         else
         {
             var newByteArray = getResult.Value.ToArray();
-            for (int i = 0; i < packetBytes.Length; i++)
+            for (var i = 0; i < packetBytes.Length; i++)
             {
                 if (packetBytes[i] != newByteArray[i])
                 {
