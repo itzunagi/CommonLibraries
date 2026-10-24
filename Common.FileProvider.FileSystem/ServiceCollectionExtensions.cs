@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Common.FileProvider.Abstractions;
 using Common.FileProvider.FileSystem.Internal;
-using Common.Results;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -22,11 +21,8 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Dictionary<string, FileSystemOptions> fileSystemOptionsMap)
     {
-        services.AddResults();
         services.TryAddSingleton<INamedFileProviderFactory>(serviceProvider =>
-            new FileSystemNamedFileProviderFactory(
-                serviceProvider.GetRequiredService<IResultFactory>(),
-                fileSystemOptionsMap));
+            new FileSystemNamedFileProviderFactory(fileSystemOptionsMap));
 
         return services;
     }

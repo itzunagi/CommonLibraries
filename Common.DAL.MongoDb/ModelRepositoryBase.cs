@@ -20,7 +20,6 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
     // intended to allow this to be shared across instances of each instance of the same generic type,
     // but not across instances of different types
     protected static readonly IdGenerationStrategyType IdGenerationStrategy;
-    protected readonly IResultFactory ResultFactory;
 
     static ModelRepositoryBase()
     {
@@ -31,14 +30,12 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
             .SingleOrDefault()?.Strategy ?? IdGenerationStrategyType.Auto;
     }
 
-    protected ModelRepositoryBase(IResultFactory resultFactory,
-        IMongoClient mongoClient)
+    protected ModelRepositoryBase(IMongoClient mongoClient)
     {
         Client = mongoClient ?? throw new ArgumentNullException(nameof(mongoClient));
         var dbModelInstance = Activator.CreateInstance(typeof(TDatabaseModel)) as TDatabaseModel;
         Collection = dbModelInstance?.Type ?? throw new InvalidOperationException($"{typeof(TDatabaseModel)} missing type setting.");
         Database = dbModelInstance.Service ?? throw new InvalidOperationException($"{typeof(TDatabaseModel)} missing service setting.");
-        ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
 
     public virtual async Task<IResult<TBusinessModel>> CreateAsync(TBusinessModel model)

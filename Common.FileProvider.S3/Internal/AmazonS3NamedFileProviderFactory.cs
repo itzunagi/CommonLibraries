@@ -17,18 +17,15 @@ internal class AmazonS3NamedFileProviderFactory : INamedFileProviderFactory
 
     private readonly IAmazonS3 _amazonS3Client;
     private readonly IImmutableDictionary<string, S3BucketOptions> _optionsMap;
-    private readonly IResultFactory _resultFactory;
 
     #endregion
 
     public AmazonS3NamedFileProviderFactory(
         IAmazonS3 amazonS3Client,
-        IResultFactory resultFactory,
         IDictionary<string, S3BucketOptions> namesToBucketOptionsMap)
     {
         _amazonS3Client = amazonS3Client ?? throw new ArgumentNullException(nameof(amazonS3Client));
         _optionsMap = namesToBucketOptionsMap.ToImmutableDictionary() ?? throw new ArgumentNullException(nameof(namesToBucketOptionsMap));
-        _resultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
 
     /// <inheritdoc />
@@ -36,9 +33,9 @@ internal class AmazonS3NamedFileProviderFactory : INamedFileProviderFactory
     {
         if (!_optionsMap.TryGetValue(name, out var bucketOptions))
         {
-            return _resultFactory.NotFound<IFileProvider>();
+            return ResultFactory.NotFound<IFileProvider>();
         }
 
-        return _resultFactory.Success((IFileProvider)new AmazonS3NamedFileProvider(_amazonS3Client, _resultFactory, bucketOptions));
+        return ResultFactory.Success<IFileProvider>(new AmazonS3NamedFileProvider(_amazonS3Client, bucketOptions));
     }
 }

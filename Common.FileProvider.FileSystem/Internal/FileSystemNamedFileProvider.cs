@@ -18,15 +18,12 @@ internal class FileSystemNamedFileProvider : IFileProvider
     #region Private fields
 
     private readonly FileSystemOptions _options;
-    private readonly IResultFactory _resultFactory;
 
     #endregion
 
     public FileSystemNamedFileProvider(
-        IResultFactory resultFactory,
         FileSystemOptions options)
     {
-        _resultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
         _options = options;
         if (string.IsNullOrWhiteSpace(options.BasePath))
         {
@@ -41,23 +38,23 @@ internal class FileSystemNamedFileProvider : IFileProvider
     {
         if (string.IsNullOrWhiteSpace(relativePath))
         {
-            return _resultFactory.BadRequest<IEnumerable<byte>>("Must specify relative path.");
+            return ResultFactory.BadRequest<IEnumerable<byte>>("Must specify relative path.");
         }
 
         if (string.IsNullOrWhiteSpace(filename))
         {
-            return _resultFactory.BadRequest<IEnumerable<byte>>("Must specify filename.");
+            return ResultFactory.BadRequest<IEnumerable<byte>>("Must specify filename.");
         }
 
         var fullPath = Path.Combine(_options.BasePath, relativePath, filename);
         if (!File.Exists(fullPath))
         {
-            return _resultFactory.NotFound<IEnumerable<byte>>();
+            return ResultFactory.NotFound<IEnumerable<byte>>();
         }
 
         var fileBytes = await File.ReadAllBytesAsync(fullPath, cancellationToken);
 
-        return _resultFactory.Success(fileBytes.AsEnumerable());
+        return ResultFactory.Success(fileBytes.AsEnumerable());
     }
 
     /// <inheritdoc />
@@ -65,12 +62,12 @@ internal class FileSystemNamedFileProvider : IFileProvider
     {
         if (string.IsNullOrWhiteSpace(relativePath))
         {
-            return _resultFactory.BadRequest("Must specify relative path.");
+            return ResultFactory.BadRequest("Must specify relative path.");
         }
 
         if (string.IsNullOrWhiteSpace(filename))
         {
-            return _resultFactory.BadRequest("Must specify filename.");
+            return ResultFactory.BadRequest("Must specify filename.");
         }
 
         var fullPath = Path.Combine(_options.BasePath, relativePath, filename);
@@ -78,7 +75,7 @@ internal class FileSystemNamedFileProvider : IFileProvider
         await using Stream fileByteStream = new MemoryStream(fileBytes, true);
         await inputStream.CopyToAsync(fileByteStream, cancellationToken);
         await File.WriteAllBytesAsync(fullPath, fileBytes, cancellationToken);
-        return _resultFactory.Success();
+        return ResultFactory.Success();
     }
 
     #endregion

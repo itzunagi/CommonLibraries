@@ -18,14 +18,11 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel>
     where TBusinessModel : ModelBase<long>
 {
     protected readonly IAmazonDynamoDB AmazonDynamoDb;
-    protected readonly IResultFactory ResultFactory;
 
     protected ModelRepositoryBase(
-        IAmazonDynamoDB amazonDynamoDb,
-        IResultFactory resultFactory)
+        IAmazonDynamoDB amazonDynamoDb)
     {
         AmazonDynamoDb = amazonDynamoDb ?? throw new ArgumentNullException(nameof(amazonDynamoDb));
-        ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
 
     public virtual async Task<IResult<TBusinessModel>> CreateAsync(TBusinessModel model)

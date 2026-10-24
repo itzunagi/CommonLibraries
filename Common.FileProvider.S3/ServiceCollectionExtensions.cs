@@ -2,7 +2,6 @@
 using Amazon.S3;
 using Common.FileProvider.Abstractions;
 using Common.FileProvider.S3.Internal;
-using Common.Results;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -23,11 +22,9 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         Dictionary<string, S3BucketOptions> bucketOptionsMap)
     {
-        services.AddResults();
         services.TryAddSingleton<INamedFileProviderFactory>(serviceProvider =>
             new AmazonS3NamedFileProviderFactory(
                 serviceProvider.GetRequiredService<IAmazonS3>(),
-                serviceProvider.GetRequiredService<IResultFactory>(),
                 bucketOptionsMap));
 
         return services;

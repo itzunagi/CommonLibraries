@@ -23,7 +23,6 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
     // but not across instances of different types
     protected static readonly IdGenerationStrategyType IdGenerationStrategy;
     protected readonly INamedBucketProvider BucketProvider;
-    protected readonly IResultFactory ResultFactory;
 
     static ModelRepositoryBase()
     {
@@ -34,11 +33,9 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
             .SingleOrDefault()?.Strategy ?? IdGenerationStrategyType.Auto;
     }
 
-    protected ModelRepositoryBase(IResultFactory resultFactory,
-        INamedBucketProvider bucketProvider)
+    protected ModelRepositoryBase(INamedBucketProvider bucketProvider)
     {
         BucketProvider = bucketProvider ?? throw new ArgumentNullException(nameof(bucketProvider));
-        ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
 
     public virtual async Task<IResult<TBusinessModel>> CreateAsync(TBusinessModel model)
@@ -126,8 +123,7 @@ public abstract class ModelWithStructIdRepositoryBase<TDatabaseModel, TBusinessM
     where TBusinessModel : ModelBase<TId>
     where TId : struct
 {
-    protected ModelWithStructIdRepositoryBase(IResultFactory resultFactory,
-        INamedBucketProvider bucketProvider) : base(resultFactory, bucketProvider)
+    protected ModelWithStructIdRepositoryBase(INamedBucketProvider bucketProvider) : base(bucketProvider)
     {
     }
 

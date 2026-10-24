@@ -21,19 +21,16 @@ internal sealed class AmazonS3NamedFileProvider : IFileProvider
     #region Private fields
 
     private readonly IAmazonS3 _amazonS3Client;
-    private readonly IResultFactory _resultFactory;
     private readonly S3BucketOptions _bucketOptions;
 
     #endregion
 
     public AmazonS3NamedFileProvider(
         IAmazonS3 amazonS3Client,
-        IResultFactory resultFactory,
         S3BucketOptions bucketOptions)
     {
         _amazonS3Client = amazonS3Client ?? throw new ArgumentNullException(nameof(amazonS3Client));
         _bucketOptions = bucketOptions;
-        _resultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
 
     #region IFileProvider public methods
@@ -51,11 +48,11 @@ internal sealed class AmazonS3NamedFileProvider : IFileProvider
             var newByteArray = new byte[getResponse.ContentLength];
             await using Stream newByteStream = new MemoryStream(newByteArray, true);
             await getResponse.ResponseStream.CopyToAsync(newByteStream, cancellationToken).ConfigureAwait(false);
-            return _resultFactory.Success(newByteArray.AsEnumerable());
+            return ResultFactory.Success(newByteArray.AsEnumerable());
         }
         catch (AmazonS3Exception e)
         {
-            return _resultFactory.Error<IEnumerable<byte>>(HttpStatusCode.InternalServerError, e.Message);
+            return ResultFactory.Error<IEnumerable<byte>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
 
@@ -70,11 +67,11 @@ internal sealed class AmazonS3NamedFileProvider : IFileProvider
                 Key = $"{Path.Combine(relativePath, filename)}",
                 InputStream = inputStream
             }, cancellationToken);
-            return _resultFactory.Success();
+            return ResultFactory.Success();
         }
         catch (AmazonS3Exception e)
         {
-            return _resultFactory.Error(HttpStatusCode.InternalServerError, e.Message);
+            return ResultFactory.Error(HttpStatusCode.InternalServerError, e.Message);
         }
     }
 
