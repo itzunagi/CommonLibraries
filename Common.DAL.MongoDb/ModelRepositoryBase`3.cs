@@ -44,6 +44,7 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
         Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
+
     public virtual async Task<IResult<TBusinessModel>> CreateAsync(TBusinessModel model)
     {
         var dbModel = Mapper.Map<TDatabaseModel>(model);

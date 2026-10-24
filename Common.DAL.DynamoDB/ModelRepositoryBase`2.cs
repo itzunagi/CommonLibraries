@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using AutoMapper;
 using Common.BusinessLogic.Models;
 using Common.DAL.DynamoDB.Models;
 using Common.DAL.Shared.NoSql;
@@ -19,16 +18,13 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel>
     where TBusinessModel : ModelBase<long>
 {
     protected readonly IAmazonDynamoDB AmazonDynamoDb;
-    protected readonly IMapper Mapper;
     protected readonly IResultFactory ResultFactory;
 
     protected ModelRepositoryBase(
         IAmazonDynamoDB amazonDynamoDb,
-        IMapper mapper,
         IResultFactory resultFactory)
     {
         AmazonDynamoDb = amazonDynamoDb ?? throw new ArgumentNullException(nameof(amazonDynamoDb));
-        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
 
