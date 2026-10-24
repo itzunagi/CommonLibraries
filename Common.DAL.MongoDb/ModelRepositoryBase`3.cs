@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using AutoMapper;
 using Common.BusinessLogic.Models;
 using Common.DAL.MongoDb.Documents;
 using Common.DAL.Shared.NoSql;
@@ -21,7 +20,6 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
     // intended to allow this to be shared across instances of each instance of the same generic type,
     // but not across instances of different types
     protected static readonly IdGenerationStrategyType IdGenerationStrategy;
-    protected readonly IMapper Mapper;
     protected readonly IResultFactory ResultFactory;
 
     static ModelRepositoryBase()
@@ -34,20 +32,18 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
     }
 
     protected ModelRepositoryBase(IResultFactory resultFactory,
-        IMapper mapper,
         IMongoClient mongoClient)
     {
         Client = mongoClient ?? throw new ArgumentNullException(nameof(mongoClient));
         var dbModelInstance = Activator.CreateInstance(typeof(TDatabaseModel)) as TDatabaseModel;
         Collection = dbModelInstance?.Type ?? throw new InvalidOperationException($"{typeof(TDatabaseModel)} missing type setting.");
         Database = dbModelInstance.Service ?? throw new InvalidOperationException($"{typeof(TDatabaseModel)} missing service setting.");
-        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
 
     public virtual async Task<IResult<TBusinessModel>> CreateAsync(TBusinessModel model)
     {
-        var dbModel = Mapper.Map<TDatabaseModel>(model);
+        var dbModel = ToDatabaseModel(model);
         var database = Client.GetDatabase(Database);
         var collection = database.GetCollection<TDatabaseModel>(Collection);
 
@@ -73,7 +69,7 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
         var document = documentList.SingleOrDefault();
         return document == null
             ? ResultFactory.NotFound<TBusinessModel>()
-            : ResultFactory.Success(Mapper.Map<TBusinessModel>(document));
+            : ResultFactory.Success(ToBusinessModel(document));
     }
 
     public virtual async Task<IResult> DeleteAsync(TId id)
@@ -94,7 +90,7 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
             {
                 Sort = Builders<TDatabaseModel>.Sort.Ascending(m => m.Id)
             }).ConfigureAwait(false);
-        return ResultFactory.Success(documents.ToList(CancellationToken.None).Select(Mapper.Map<TBusinessModel>));
+        return ResultFactory.Success(documents.ToList(CancellationToken.None).Select(ToBusinessModel));
     }
 
     public async Task<IResult> SaveAsync(TId id, TBusinessModel model)
@@ -103,13 +99,17 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
         var collection = database.GetCollection<TDatabaseModel>(Collection);
         var filter = Builders<TDatabaseModel>.Filter.Eq("_id", id);
         model.Id = id;
-        var findResult = await collection.FindOneAndReplaceAsync(filter, Mapper.Map<TDatabaseModel>(model));
+        var findResult = await collection.FindOneAndReplaceAsync(filter, ToDatabaseModel(model));
         if (findResult == null)
         {
             return ResultFactory.NotFound<TBusinessModel>();
         }
         return ResultFactory.Success(model);
     }
+
+    protected abstract TBusinessModel ToBusinessModel(TDatabaseModel databaseModel);
+
+    protected abstract TDatabaseModel ToDatabaseModel(TBusinessModel businessModel);
 
     protected virtual Task<TId> GetNextIdAsync()
     {

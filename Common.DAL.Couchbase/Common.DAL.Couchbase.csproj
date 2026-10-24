@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Couchbase.Extensions.DependencyInjection" Version="3.10.0" />
     <PackageReference Include="CouchbaseNetClient" Version="3.10.0" />
     <PackageReference Include="Linq2Couchbase" Version="2.2.0" />

@@ -1,4 +1,3 @@
-﻿using AutoMapper;
 using Common.BusinessLogic.Models;
 using Common.DAL.Couchbase.Documents;
 using Common.Results;
@@ -23,7 +22,6 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
     // intended to allow this to be shared across instances of each instance of the same generic type,
     // but not across instances of different types
     protected static readonly IdGenerationStrategyType IdGenerationStrategy;
-    protected readonly IMapper Mapper;
     protected readonly INamedBucketProvider BucketProvider;
     protected readonly IResultFactory ResultFactory;
 
@@ -37,11 +35,9 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
     }
 
     protected ModelRepositoryBase(IResultFactory resultFactory,
-        IMapper mapper,
         INamedBucketProvider bucketProvider)
     {
         BucketProvider = bucketProvider ?? throw new ArgumentNullException(nameof(bucketProvider));
-        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         ResultFactory = resultFactory ?? throw new ArgumentNullException(nameof(resultFactory));
     }
 
@@ -54,7 +50,7 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
         {
             model.Id = IdGenerationStrategy == IdGenerationStrategyType.Auto ? await GetNextIdAsync() : model.Id;
             var key = DocumentMetadataHelper<TDatabaseModel, TId>.GetDocumentKey(model.Id);
-            var mutationResult = await collection.InsertAsync(key, Mapper.Map<TDatabaseModel>(model)).ConfigureAwait(false);
+            var mutationResult = await collection.InsertAsync(key, ToDatabaseModel(model)).ConfigureAwait(false);
             return ResultFactory.Success(model);
         }
         catch (Exception ex)
@@ -71,7 +67,7 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
         {
             var getResult = await collection.GetAsync(DocumentMetadataHelper<TDatabaseModel, TId>.GetDocumentKey(id)).ConfigureAwait(false);
             var content = getResult.ContentAs<TDatabaseModel>();
-            var model = Mapper.Map<TBusinessModel>(content);
+            var model = ToBusinessModel(content);
             return ResultFactory.Success(model);
         }
         catch (DocumentNotFoundException)
@@ -115,6 +111,10 @@ public abstract class ModelRepositoryBase<TDatabaseModel, TBusinessModel, TId>
         throw new NotImplementedException();
     }
 
+    protected abstract TBusinessModel ToBusinessModel(TDatabaseModel databaseModel);
+
+    protected abstract TDatabaseModel ToDatabaseModel(TBusinessModel businessModel);
+
     protected virtual Task<TId> GetNextIdAsync()
     {
         throw new NotImplementedException();
@@ -127,8 +127,7 @@ public abstract class ModelWithStructIdRepositoryBase<TDatabaseModel, TBusinessM
     where TId : struct
 {
     protected ModelWithStructIdRepositoryBase(IResultFactory resultFactory,
-        IMapper mapper,
-        INamedBucketProvider bucketProvider) : base(resultFactory, mapper, bucketProvider)
+        INamedBucketProvider bucketProvider) : base(resultFactory, bucketProvider)
     {
     }
 
