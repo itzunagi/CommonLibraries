@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>10</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.300.26" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.402.11" />
   </ItemGroup>
 
   <ItemGroup>

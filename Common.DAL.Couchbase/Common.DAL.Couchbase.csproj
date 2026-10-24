@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>10</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="Couchbase.Extensions.DependencyInjection" Version="3.4.13" />
-    <PackageReference Include="CouchbaseNetClient" Version="3.4.13" />
-    <PackageReference Include="Linq2Couchbase" Version="2.0.0" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Couchbase.Extensions.DependencyInjection" Version="3.10.0" />
+    <PackageReference Include="CouchbaseNetClient" Version="3.10.0" />
+    <PackageReference Include="Linq2Couchbase" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
