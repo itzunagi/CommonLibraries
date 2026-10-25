@@ -33,12 +33,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution 
 		LICENSE-2.0.txt = LICENSE-2.0.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{98CE9EFC-25FD-43DA-9A8C-90183902BDAF}"
-	ProjectSection(SolutionItems) = preProject
-		scripts\build-local.cmd = scripts\build-local.cmd
-		scripts\push-local.cmd = scripts\push-local.cmd
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E6E492F3-0F55-48F2-AFC3-DC09B6271181}"
 	ProjectSection(SolutionItems) = preProject
 		docs\PUBLISHING.md = docs\PUBLISHING.md
@@ -106,7 +100,6 @@ Global
 		SolutionGuid = {DDA82FA5-7551-451F-B07C-33A020A684FE}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{98CE9EFC-25FD-43DA-9A8C-90183902BDAF} = {4BAB511A-B1B6-48C3-A1AB-335807DC3C72}
 		{E6E492F3-0F55-48F2-AFC3-DC09B6271181} = {4BAB511A-B1B6-48C3-A1AB-335807DC3C72}
 	EndGlobalSection
 EndGlobal
