@@ -27,6 +27,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.FileProvider.S3", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.FileProvider.FileSystem", "Common.FileProvider.FileSystem\Common.FileProvider.FileSystem.csproj", "{4BD7C3DD-E6B7-43E0-94CF-1533766A58FF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution files", "{4BAB511A-B1B6-48C3-A1AB-335807DC3C72}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+		LICENSE-2.0.txt = LICENSE-2.0.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{98CE9EFC-25FD-43DA-9A8C-90183902BDAF}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\build-local.cmd = scripts\build-local.cmd
+		scripts\push-local.cmd = scripts\push-local.cmd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,5 +99,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DDA82FA5-7551-451F-B07C-33A020A684FE}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{98CE9EFC-25FD-43DA-9A8C-90183902BDAF} = {4BAB511A-B1B6-48C3-A1AB-335807DC3C72}
 	EndGlobalSection
 EndGlobal
