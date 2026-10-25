@@ -17,13 +17,15 @@ Workflow: `.github/workflows/publish-nuget.yml`. It runs only on pushes/merges t
     "Condition": {
       "StringEquals": {
         "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-        "token.actions.githubusercontent.com:sub": "repo:itzunagi/CommonLibraries:environment:codeartifact",
+        "token.actions.githubusercontent.com:sub": "repo:itzunagi@<OWNER ID>/CommonLibraries@<REPO ID>:environment:codeartifact",
         "token.actions.githubusercontent.com:ref": "refs/heads/master"
       }
     }
   }]
 }
 ```
+
+Exact sub string can be retrieved from GitHub CLI with `gh api repos/itzunagi/CommonLibraries/actions/oidc/customization/sub`
 
 3. Attach a least-privilege policy (no delete permissions):
 
