@@ -39,6 +39,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{98CE
 		scripts\push-local.cmd = scripts\push-local.cmd
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E6E492F3-0F55-48F2-AFC3-DC09B6271181}"
+	ProjectSection(SolutionItems) = preProject
+		docs\PUBLISHING.md = docs\PUBLISHING.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,5 +107,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{98CE9EFC-25FD-43DA-9A8C-90183902BDAF} = {4BAB511A-B1B6-48C3-A1AB-335807DC3C72}
+		{E6E492F3-0F55-48F2-AFC3-DC09B6271181} = {4BAB511A-B1B6-48C3-A1AB-335807DC3C72}
 	EndGlobalSection
 EndGlobal

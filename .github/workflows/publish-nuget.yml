@@ -1,0 +1,95 @@
+name: Build and publish NuGet packages
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-nuget
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    name: Detect version changes
+    runs-on: ubuntu-latest
+    outputs:
+      projects: ${{ steps.detect.outputs.projects }}
+      any: ${{ steps.detect.outputs.any }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: detect
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          projects=$(python3 .github/scripts/detect_changed_versions.py "$BEFORE" "$AFTER")
+          echo "Changed: $projects"
+          echo "projects=$projects" >> "$GITHUB_OUTPUT"
+          if [ "$projects" = "[]" ]; then echo "any=false" >> "$GITHUB_OUTPUT"; else echo "any=true" >> "$GITHUB_OUTPUT"; fi
+
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore CommonLibraries.sln
+      - run: dotnet build CommonLibraries.sln -c Release --no-restore
+      - run: dotnet test CommonLibraries.sln -c Release --no-build --verbosity minimal
+
+  publish:
+    name: Publish to CodeArtifact
+    needs: [detect, build]
+    if: needs.detect.outputs.any == 'true'
+    runs-on: ubuntu-latest
+    environment: codeartifact
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Pack changed projects
+        env:
+          PROJECTS: ${{ needs.detect.outputs.projects }}
+        run: |
+          set -euo pipefail
+          mkdir artifacts
+          echo "$PROJECTS" | python3 -c 'import json,sys; print("\n".join(json.load(sys.stdin)))' |
+          while read -r proj; do
+            dotnet pack "$proj" -c Release -o artifacts
+          done
+          ls artifacts
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: gh-publish-nuget
+      - name: Push to CodeArtifact
+        env:
+          CA_DOMAIN: ${{ vars.CODEARTIFACT_DOMAIN }}
+          CA_OWNER: ${{ secrets.CODEARTIFACT_DOMAIN_OWNER }}
+          CA_REPO: ${{ vars.CODEARTIFACT_REPOSITORY }}
+        run: |
+          set -euo pipefail
+          token=$(aws codeartifact get-authorization-token --domain "$CA_DOMAIN" --domain-owner "$CA_OWNER" --query authorizationToken --output text)
+          echo "::add-mask::$token"
+          endpoint=$(aws codeartifact get-repository-endpoint --domain "$CA_DOMAIN" --domain-owner "$CA_OWNER" --repository "$CA_REPO" --format nuget --query repositoryEndpoint --output text)
+          dotnet nuget add source "${endpoint}v3/index.json" --name codeartifact --username aws --password "$token" --store-password-in-clear-text
+          for pkg in artifacts/*.nupkg; do
+            dotnet nuget push "$pkg" --source codeartifact --skip-duplicate
+          done
