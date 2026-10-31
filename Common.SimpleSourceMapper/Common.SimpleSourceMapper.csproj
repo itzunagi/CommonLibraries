@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <PackageId>Common.SimpleSourceMapper</PackageId>
+    <Version>0.1.0$(VersionSuffix)</Version>
+    <Description>Attributes, analyzer and source generator for simple compile-time object mapping.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- The analyzer ships next to the attributes; no extra assemblies end up in lib/. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="System" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Built first, but neither referenced at runtime nor exposed as a package dependency. -->
+    <ProjectReference Include="..\Common.SimpleSourceMapper.Compiler\Common.SimpleSourceMapper.Compiler.csproj"
+                      ReferenceOutputAssembly="false"
+                      PrivateAssets="all" />
+    <None Include="..\Common.SimpleSourceMapper.Compiler\bin\$(Configuration)\netstandard2.0\Common.SimpleSourceMapper.Compiler.dll"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false" />
+    <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

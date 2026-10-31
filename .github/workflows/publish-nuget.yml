@@ -3,17 +3,22 @@ name: Build and publish NuGet packages
 on:
   push:
     branches: [master]
+  # Pull requests only run the build-and-test job; detect and publish are gated to pushes
+  # (and plain pull_request runs never receive secrets or OIDC tokens from forks).
+  pull_request:
+    branches: [master]
 
 permissions:
   contents: read
 
 concurrency:
-  group: publish-nuget
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.ref) || 'publish-nuget' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   detect:
     name: Detect version changes
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       projects: ${{ steps.detect.outputs.projects }}
@@ -50,7 +55,7 @@ jobs:
   publish:
     name: Publish to CodeArtifact
     needs: [detect, build]
-    if: needs.detect.outputs.any == 'true'
+    if: github.event_name == 'push' && needs.detect.outputs.any == 'true'
     runs-on: ubuntu-latest
     environment: codeartifact
     permissions:

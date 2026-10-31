@@ -1,6 +1,6 @@
 # Publishing NuGet packages to CodeArtifact
 
-Workflow: `.github/workflows/publish-nuget.yml`. It runs only on pushes/merges to `master`. A package is published only when its `.csproj` `<Version>` value changed in that push. To release, bump `<Version>` in the project file (e.g. `1.0.2$(VersionSuffix)`).
+Workflow: `.github/workflows/publish-nuget.yml`. Pull requests against `master` run only the build-and-test job (no secrets, no publishing); the detect and publish jobs run only on pushes/merges to `master`. A package is published only when its `.csproj` `<Version>` value changed in that push. To release, bump `<Version>` in the project file (e.g. `1.0.2$(VersionSuffix)`).
 
 ## One-time AWS setup
 
@@ -47,7 +47,7 @@ Create an environment named `codeartifact` (Settings > Environments); restrict d
 - Secrets: `AWS_ROLE_ARN`, `CODEARTIFACT_DOMAIN_OWNER` (account ID)
 - Variables: `AWS_REGION`, `CODEARTIFACT_DOMAIN`, `CODEARTIFACT_REPOSITORY`
 
-Also enable branch protection on `master` (require PRs and reviews, restrict who can push), and require approval for workflows from outside contributors. Never add `pull_request_target`/`pull_request` triggers to the publish job.
+Also enable branch protection on `master` (require PRs and reviews, restrict who can push), and require approval for workflows from outside contributors. Never add `pull_request_target` to this workflow, and keep the detect/publish jobs gated on `github.event_name == 'push'`.
 
 ## Notes
 
